@@ -19,7 +19,7 @@ const localLogin = new LocalStrategy(
     // Verify this email and password, call done with the user
     // if it is the correct email and password
     // otherwise, call done with false
-    await User.findOne({ email: email }, (err: Error, user: any) => {
+    await User.findOne({ email: email }, (err: Error, user: typeof User) => {
       if (err) {
         return done(err);
       }

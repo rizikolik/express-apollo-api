@@ -9,7 +9,8 @@ export const tokenForUser = (user?: UserType) => {
   if (!user) return null;
   const timestamp = new Date().getTime();
 
-  return jwt.sign({ user: user._id, iat: timestamp }, secret);
+  const token = jwt.sign({ user: user._id, iat: timestamp }, secret);
+  return token;
 };
 export const getTokenFromRequest = (request: Request) => {
   const header = request.headers.authorization;
