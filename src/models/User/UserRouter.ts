@@ -11,10 +11,10 @@ import { SignupBodyValidator } from "../../middleware/validator";
 import { Login, Signup } from "./UserController";
 import { NextFunction } from "express-serve-static-core";
 router
-  .route("/hello")
+  .route("/checkAuth")
   .get(async (req: Request, res: Response, next: NextFunction) => {
     await requireLogin(req, res, () =>
-      res.send({ mesage: "sdsadasdsadsadasd" })
+      res.send({ mesage: "you are authenticated.." })
     );
   });
 router

@@ -1,6 +1,5 @@
 import axios from "axios";
 import mongoose from "mongoose";
-const fetch = require("node-fetch");
 
 const FETCH_URL = process.env.FETCH_URL;
 export const findById = (id: string) => {
@@ -8,7 +7,7 @@ export const findById = (id: string) => {
   return model.findById(id);
 };
 export const findAll = async () => {
-  const Bike = await mongoose.model("Bike");
+  const Bike = mongoose.model("Bike");
 
   let bikes = await Bike.find();
   if (bikes.length <= 2 && FETCH_URL) {
