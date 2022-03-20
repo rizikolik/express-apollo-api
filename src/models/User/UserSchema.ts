@@ -22,7 +22,7 @@ const userSchema = new Schema({
 userSchema.pre("save", async function (this: any, next: NextFunction) {
   // get access to the user model
   var user = this;
-  const hashedPassword = await bcrypt.hashSync(user.password, 12);
+  const hashedPassword = bcrypt.hashSync(user.password, 12);
   user.password = hashedPassword;
   next();
 });
