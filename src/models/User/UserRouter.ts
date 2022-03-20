@@ -10,6 +10,7 @@ import passport from "passport";
 import { SignupBodyValidator } from "../../middleware/validator";
 import { Login, Signup } from "./UserController";
 import { NextFunction } from "express-serve-static-core";
+
 router
   .route("/checkAuth")
   .get(async (req: Request, res: Response, next: NextFunction) => {
@@ -19,8 +20,10 @@ router
   });
 router
   .route("/login")
-  .post(passport.authenticate("local", { session: false }, Login));
-
+  .post(
+    passport.authenticate("local", { session: false }),
+    (req: Request, res: Response) => Login(req, res)
+  );
 router.route("/signup").post((req: Request, res: Response) => {
   SignupBodyValidator(req, res, Signup);
 });
