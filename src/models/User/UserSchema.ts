@@ -38,7 +38,7 @@ userSchema.methods.validatePassword = (
 };
 userSchema.methods.comparePassword = function (
   candidatePassword: string,
-  callback: (err?: Error | null, user?: any, info?: any) => void
+  callback: (err?: Error | null, isMatch?: boolean) => void
 ) {
   bcrypt.compare(
     candidatePassword,

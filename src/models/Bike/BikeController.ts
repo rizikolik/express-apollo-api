@@ -15,7 +15,6 @@ export const findAllBikes = async (req: Request, res: Response) => {
     const bikes = await findAll();
     res.send(bikes);
   } catch (err) {
-    console.log(err, "HERE BIKE ERRORORO");
     res.send(err);
   }
 };
