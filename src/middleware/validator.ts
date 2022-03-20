@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
-export const SignupBodyValidator = (req: Request, res: Response, next: any) => {
+export const SignupBodyValidator = (
+  req: Request,
+  res: Response,
+  next: (req: Request, res: Response) => void
+) => {
   if (!req.body) {
     return res.status(400).send("Body cant be emtpy!");
   }

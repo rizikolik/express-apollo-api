@@ -1,20 +1,21 @@
 import { NextFunction, Request, Response } from "express";
-import { ServerError } from "./types/general-types";
-
+import { ErrnoException, ServerError } from "./types/general-types";
+import { ApolloServer } from "apollo-server-express";
 import express from "express";
-import path from "path";
 import cors from "cors";
-// eslint-disable-next-line no-unused-vars
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import { logger } from "./utils/logger";
 import morgan from "morgan";
 import passport from "passport";
+
 // Modules that will be used by App //
 
 import * as UserModule from "./models/User";
 import * as BikeModule from "./models/Bike/index";
+import { resolvers, typeDefs } from "./resolvers/bikeResolver";
 import { dbConnect } from "./database";
+import { requireLogin } from "./middleware/requireLogin";
 // startup
 require("dotenv").config();
 
@@ -28,8 +29,9 @@ app.use(cors());
 app.use(passport.initialize());
 
 app.use(morgan("combined", { stream: logger.stream })); // Combine morgan's console logs with winston logs
-app.use("/api", UserModule.router);
-app.use("/api", BikeModule.router);
+app.use("/api", UserModule.router, requireLogin);
+app.use("/api", BikeModule.router, requireLogin);
+app.use("/graphql", requireLogin);
 
 // error handler
 app.use(function (
@@ -54,18 +56,18 @@ app.use(function (
 const port = process.env.PORT || 8000;
 
 app.set("port", port);
-dbConnect().then(() => {
-  const server = app.listen(port);
+dbConnect().then(async () => {
+  const server = new ApolloServer({ typeDefs, resolvers });
+  app.listen(port);
+  await server.start();
+  server.applyMiddleware({ app });
 
-  server.on("listening", function (): void {
-    const addr = server.address();
-    const bind =
-      typeof addr === "string" ? `pipe ${addr}` : `port ${addr?.port}`;
-    logger.info(`Listening on ${bind}`, null);
+  app.on("listening", function (): void {
+    logger.info(`Listening on ${port}`, null);
   });
-  server.on("error", onError);
+  app.on("error", onError);
 
-  function onError(error: NodeJS.ErrnoException) {
+  function onError(error: ErrnoException | any) {
     if (error.syscall !== "listen") {
       throw error;
     }
